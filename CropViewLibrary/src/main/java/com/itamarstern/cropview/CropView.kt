@@ -7,6 +7,7 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 
+const val ANDROID_STYLE_NAMESPACE = "http://schemas.android.com/apk/res-auto"
 const val TAG = "CropViewTag"
 
 class CropView(
@@ -19,10 +20,13 @@ class CropView(
     private var halfLayoutWidth: Int = 0
     private var halfLayoutHeight: Int = 0
 
-    private val cornerBitmapStartTop: Bitmap = getBitmapAttr("startTopIcon", R.drawable.corner_start_top)
+    private val cornerBitmapStartTop: Bitmap =
+        getBitmapAttr("startTopIcon", R.drawable.corner_start_top)
     private val cornerBitmapEndTop: Bitmap = getBitmapAttr("endTopIcon", R.drawable.corner_end_top)
-    private val cornerBitmapStartBottom: Bitmap = getBitmapAttr("startBottomIcon", R.drawable.corner_start_bottom)
-    private val cornerBitmapEndBottom: Bitmap = getBitmapAttr("endBottomIcon", R.drawable.corner_end_bottom)
+    private val cornerBitmapStartBottom: Bitmap =
+        getBitmapAttr("startBottomIcon", R.drawable.corner_start_bottom)
+    private val cornerBitmapEndBottom: Bitmap =
+        getBitmapAttr("endBottomIcon", R.drawable.corner_end_bottom)
 
     private var cropWidth = getCropDimension("initialWidthCrop", 200f)
     private var cropHeight = getCropDimension("initialHeightCrop", 200f)
@@ -116,7 +120,7 @@ class CropView(
                             if (cropHeight + resizing < minHeight) {
                                 cropMarginTop += (cropHeight - minHeight) / 2
                                 cropHeight = minHeight
-                            } else if (cropMarginTop - resizing / 2 > 0  && resizing / 2 + cropMarginTop + cropHeight < height) {
+                            } else if (cropMarginTop - resizing / 2 > 0 && resizing / 2 + cropMarginTop + cropHeight < height) {
                                 cropHeight += resizing
                                 cropMarginTop -= resizing / 2
                             }
@@ -148,19 +152,20 @@ class CropView(
     private val detector: GestureDetector = GestureDetector(context, touchListener)
 
     private fun getCropDimension(attr: String, defValue: Float): Float {
-        val userInput = attrs.getAttributeValue("http://schemas.android.com/apk/res-auto", attr)
+        val userInput = attrs.getAttributeValue(ANDROID_STYLE_NAMESPACE, attr)
         return (userInput?.substring(0, userInput.indexOf("."))?.toFloat() ?: defValue).dp()
     }
 
     private fun getCropMarginTop(): Float {
-        val userInput = attrs.getAttributeValue("http://schemas.android.com/apk/res-auto", "cropMarginTop")
-            ?: return -1f
+        val userInput =
+            attrs.getAttributeValue(ANDROID_STYLE_NAMESPACE, "cropMarginTop")
+                ?: return -1f
         return (userInput.substring(0, userInput.indexOf(".")).toFloat()).dp()
     }
 
     private fun getBitmapAttr(attr: String, defBitmap: Int): Bitmap {
         val userInput = attrs.getAttributeResourceValue(
-            "http://schemas.android.com/apk/res-auto",
+            ANDROID_STYLE_NAMESPACE,
             attr,
             defBitmap
         )

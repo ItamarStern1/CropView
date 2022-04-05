@@ -16,7 +16,10 @@ class CropView(
 ) : View(
     context,
     attrs
-) {
+){
+
+    lateinit var listener: OnSizeChangeListener
+
     private var halfLayoutWidth: Int = 0
     private var halfLayoutHeight: Int = 0
 
@@ -126,6 +129,7 @@ class CropView(
                             }
 
                             invalidate()
+                            listener.onSizeChange(getCropRect(), cropWidth.toInt(), cropHeight.toInt())
                         }
                         lastX = event.x
                         lastY = event.y
@@ -207,4 +211,13 @@ class CropView(
             (heightMargin + cropHeight).toInt()
         )
     }
+
+    fun setOnSizeChangeListener(listener: OnSizeChangeListener){
+        this.listener = listener
+    }
+
+}
+
+interface OnSizeChangeListener {
+    fun onSizeChange(rect: Rect, width: Int, height: Int)
 }

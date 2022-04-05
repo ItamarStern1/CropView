@@ -1,5 +1,6 @@
 package com.itamarstern.cropview
 
+import android.graphics.Rect
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -26,5 +27,11 @@ class MainActivity : AppCompatActivity() {
                 Log.d(TAG, "${getCropRect()}")
             }
         }
+
+        binding.cropView.setOnSizeChangeListener(object : OnSizeChangeListener{
+            override fun onSizeChange(rect: Rect, width: Int, height: Int) {
+                Log.d(TAG, "rect: $rect | width: $width | height: $height")
+            }
+        })
     }
 }

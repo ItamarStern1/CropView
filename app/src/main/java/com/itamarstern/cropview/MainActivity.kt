@@ -2,7 +2,10 @@ package com.itamarstern.cropview
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.itamarstern.cropview.databinding.ActivityMainBinding
+
+const val TAG = "CropViewTag"
 
 class MainActivity : AppCompatActivity() {
 
@@ -19,7 +22,8 @@ class MainActivity : AppCompatActivity() {
         binding.button.setOnClickListener {
             with(binding.cropView){
                 setCropWidthDp(200)
-                println("test ${getCropRect()}")
+                setCropHeightDp(200)
+                Log.d(TAG, "${getCropRect()}")
             }
         }
     }

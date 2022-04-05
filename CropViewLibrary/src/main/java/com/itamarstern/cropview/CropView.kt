@@ -7,6 +7,8 @@ import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
 
+const val TAG = "CropViewTag"
+
 class CropView(
     context: Context,
     private val attrs: AttributeSet,
@@ -14,42 +16,19 @@ class CropView(
     context,
     attrs
 ) {
+    //If the user inserted value to cropMarginTop attribute - false. else - true.
     private var cropInCenterVertically = false
 
-    private val halfLayoutWidth get() = width / 2
-    private val halfLayoutHeight get() = height / 2
+    private var halfLayoutWidth: Int = 0
+    private var halfLayoutHeight: Int = 0
 
-    private val cornerBitmapStartTop: Bitmap =
-        getBitmapAttr("startTopIcon", R.drawable.corner_start_top)
+    private val cornerBitmapStartTop: Bitmap = getBitmapAttr("startTopIcon", R.drawable.corner_start_top)
     private val cornerBitmapEndTop: Bitmap = getBitmapAttr("endTopIcon", R.drawable.corner_end_top)
-    private val cornerBitmapStartBottom: Bitmap =
-        getBitmapAttr("startBottomIcon", R.drawable.corner_start_bottom)
-    private val cornerBitmapEndBottom: Bitmap =
-        getBitmapAttr("endBottomIcon", R.drawable.corner_end_bottom)
+    private val cornerBitmapStartBottom: Bitmap = getBitmapAttr("startBottomIcon", R.drawable.corner_start_bottom)
+    private val cornerBitmapEndBottom: Bitmap = getBitmapAttr("endBottomIcon", R.drawable.corner_end_bottom)
 
     private var cropWidth = getCropDimension("initialWidthCrop", 200f)
     private var cropHeight = getCropDimension("initialHeightCrop", 200f)
-
-    fun setCropWidthDp(dp: Int) {
-        cropWidth = dp.toFloat().dp()
-        invalidate()
-    }
-
-    fun setCropHeightDp(dp: Int) {
-        cropHeight = dp.toFloat().dp()
-        invalidate()
-    }
-
-    fun getCropRect(): Rect {
-        val widthMargin = (right - cropWidth) / 2
-        val heightMargin = if(cropInCenterVertically) (bottom - cropHeight) / 2 else cropMarginTop
-        return Rect(
-            widthMargin.toInt(),
-            heightMargin.toInt(),
-            (widthMargin + cropWidth).toInt(),
-            (heightMargin + cropHeight).toInt()
-        )
-    }
 
     private val minWidth = getCropDimension("minWidthCrop", 200f)
     private val minHeight = getCropDimension("minHeightCrop", 200f)
@@ -74,6 +53,8 @@ class CropView(
 
     override fun onDraw(canvas: Canvas?) {
         super.onDraw(canvas)
+
+        setHalfLayoutDimensionsValues()
 
         canvas?.apply {
             //Camera rect:
@@ -204,4 +185,30 @@ class CropView(
     }
 
     private fun Float.dp() = (this * resources.displayMetrics.density)
+
+    private fun setHalfLayoutDimensionsValues() {
+        halfLayoutWidth = width / 2
+        halfLayoutHeight = height / 2
+    }
+
+    fun setCropWidthDp(dp: Int) {
+        cropWidth = dp.toFloat().dp()
+        invalidate()
+    }
+
+    fun setCropHeightDp(dp: Int) {
+        cropHeight = dp.toFloat().dp()
+        invalidate()
+    }
+
+    fun getCropRect(): Rect {
+        val widthMargin = (right - cropWidth) / 2
+        val heightMargin = if(cropInCenterVertically) (bottom - cropHeight) / 2 else cropMarginTop
+        return Rect(
+            widthMargin.toInt(),
+            heightMargin.toInt(),
+            (widthMargin + cropWidth).toInt(),
+            (heightMargin + cropHeight).toInt()
+        )
+    }
 }

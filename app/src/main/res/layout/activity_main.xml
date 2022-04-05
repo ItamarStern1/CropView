@@ -9,7 +9,7 @@
     android:id="@+id/layout">
 
     <com.itamarstern.cropview.CropView
-        app:cropMarginTop="100dp"
+
         android:id="@+id/cropView"
         android:alpha="0.4"
         android:background="@color/black"
@@ -26,7 +26,7 @@
 
     <Button
         android:id="@+id/button"
-        android:text="Width: 200"
+        android:text="Width: 200\nHeight: 200"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         app:layout_constraintStart_toStartOf="parent"

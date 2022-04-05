@@ -42,7 +42,7 @@ class CropView(
 
     fun getCropRect(): Rect {
         val widthMargin = (right - cropWidth) / 2
-        val heightMargin = (bottom - cropHeight) / 2
+        val heightMargin = if(cropInCenterVertically) (bottom - cropHeight) / 2 else cropMarginTop
         return Rect(
             widthMargin.toInt(),
             heightMargin.toInt(),

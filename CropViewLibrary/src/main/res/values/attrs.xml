@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="CropView">
+        <attr name="minWidthCrop" format="dimension" />
+        <attr name="minHeightCrop" format="dimension" />
+        <attr name="initialWidthCrop" format="dimension" />
+        <attr name="initialHeightCrop" format="dimension" />
+        <attr name="startTopIcon" format="reference" />
+        <attr name="endTopIcon" format="reference" />
+        <attr name="startBottomIcon" format="reference" />
+        <attr name="endBottomIcon" format="reference" />
+        <attr name="cropMarginTop" format="dimension" />
+    </declare-styleable>
+</resources>

@@ -1,6 +1,7 @@
 package com.itamarstern.cropview
 
 import android.content.Context
+import android.content.res.TypedArray
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.GestureDetector
@@ -8,6 +9,7 @@ import android.view.MotionEvent
 import android.view.View
 import androidx.appcompat.content.res.AppCompatResources.getDrawable
 import androidx.core.graphics.drawable.toBitmap
+import kotlin.math.roundToInt
 
 const val ANDROID_STYLE_NAMESPACE = "http://schemas.android.com/apk/res-auto"
 const val TAG = "CropViewTag"
@@ -19,20 +21,20 @@ class CropView(
     context,
     attrs
 ){
-    val CORNER_OFFSET = 4.dp()
+    private val CORNER_OFFSET = 4.dp()
 
     lateinit var listener: OnSizeChangeListener
 
     private var halfLayoutWidth: Int = 0
     private var halfLayoutHeight: Int = 0
 
-    private val cornerBitmapStartTop: Bitmap =
-        getBitmapAttr("startTopIcon", R.drawable.cropview_corner_top_left)
-    private val cornerBitmapEndTop: Bitmap = getBitmapAttr("endTopIcon", R.drawable.cropview_corner_top_right)
-    private val cornerBitmapStartBottom: Bitmap =
-        getBitmapAttr("startBottomIcon", R.drawable.cropview_corner_bottom_left)
-    private val cornerBitmapEndBottom: Bitmap =
-        getBitmapAttr("endBottomIcon", R.drawable.cropview_corner_bottom_right)
+    private val cornerBitmapTopLeft: Bitmap =
+        getBitmapAttr("topLeftIcon", R.drawable.cropview_corner_top_left)
+    private val cornerBitmapTopRight: Bitmap = getBitmapAttr("topRightIcon", R.drawable.cropview_corner_top_right)
+    private val cornerBitmapBottomLeft: Bitmap =
+        getBitmapAttr("bottomLeftIcon", R.drawable.cropview_corner_bottom_left)
+    private val cornerBitmapBottomRight: Bitmap =
+        getBitmapAttr("bottomRightIcon", R.drawable.cropview_corner_bottom_right)
 
     private var cropWidth = getCropDimension("initialWidthCrop", 200f)
     private var cropHeight = getCropDimension("initialHeightCrop", 200f)
@@ -61,39 +63,41 @@ class CropView(
 
         canvas?.apply {
             //Camera rect:
+            val sideMargin = (width - cropWidth) / 2
             drawRect(
-                (width - cropWidth) / 2,
-                cropMarginTop,
-                cropWidth + (width - cropWidth) / 2,
+                sideMargin,
+                cropMarginTop.toFloat(),
+                cropWidth + sideMargin,
                 cropHeight + cropMarginTop,
                 cropPaint
             )
             //4 corner bitmaps:
+            val leftMarginOfLeftCorners = sideMargin - CORNER_OFFSET
+            val topMarginOfTopCorners = cropMarginTop - CORNER_OFFSET
             drawBitmap(
-                cornerBitmapStartTop,
-                (width - cropWidth) / 2 - CORNER_OFFSET,
-                cropMarginTop - CORNER_OFFSET,
+                cornerBitmapTopLeft,
+                leftMarginOfLeftCorners,
+                topMarginOfTopCorners,
                 cornerPaint
             )
             drawBitmap(
-                cornerBitmapEndTop,
-                cropWidth + (width - cropWidth) / 2 - (cornerBitmapEndTop.width - CORNER_OFFSET),
-                cropMarginTop - CORNER_OFFSET,
+                cornerBitmapTopRight,
+                cropWidth + sideMargin - (cornerBitmapTopRight.width - CORNER_OFFSET),
+                topMarginOfTopCorners,
                 cornerPaint
             )
             drawBitmap(
-                cornerBitmapStartBottom,
-                (width - cropWidth) / 2 - CORNER_OFFSET,
-                cropHeight + cropMarginTop - (cornerBitmapStartBottom.height - CORNER_OFFSET),
+                cornerBitmapBottomLeft,
+                leftMarginOfLeftCorners,
+                cropHeight + cropMarginTop - (cornerBitmapBottomLeft.height - CORNER_OFFSET),
                 cornerPaint
             )
             drawBitmap(
-                cornerBitmapEndBottom,
-                cropWidth + (width - cropWidth) / 2 - (cornerBitmapEndBottom.width - CORNER_OFFSET),
-                cropHeight + cropMarginTop - (cornerBitmapEndBottom.height - CORNER_OFFSET),
+                cornerBitmapBottomRight,
+                cropWidth + sideMargin - (cornerBitmapBottomRight.width - CORNER_OFFSET),
+                cropHeight + cropMarginTop - (cornerBitmapBottomRight.height - CORNER_OFFSET),
                 cornerPaint
             )
-
         }
     }
 
@@ -124,11 +128,11 @@ class CropView(
                                     else lastY - event.y
 
                             if (cropHeight + resizing < minHeight) {
-                                cropMarginTop += (cropHeight - minHeight) / 2
+                                cropMarginTop += ((cropHeight - minHeight) / 2).roundToInt()
                                 cropHeight = minHeight
                             } else if (cropMarginTop - resizing / 2 > 0 && resizing / 2 + cropMarginTop + cropHeight < height) {
                                 cropHeight += resizing
-                                cropMarginTop -= resizing / 2
+                                cropMarginTop -= (resizing / 2).roundToInt()
                             }
 
                             invalidate()
@@ -163,11 +167,11 @@ class CropView(
         return (userInput?.substring(0, userInput.indexOf("."))?.toFloat() ?: defValue).dp()
     }
 
-    private fun getCropMarginTop(): Float {
-        val userInput =
-            attrs.getAttributeValue(ANDROID_STYLE_NAMESPACE, "cropMarginTop")
-                ?: return -1f
-        return (userInput.substring(0, userInput.indexOf(".")).toFloat()).dp()
+    private fun getCropMarginTop(): Int {
+        val typedArray: TypedArray = context.theme.obtainStyledAttributes(
+            attrs, R.styleable.CropView, 0, 0
+        )
+        return typedArray.getDimensionPixelSize(R.styleable.CropView_cropMarginTop, 100.dp().toInt())
     }
 
     private fun getBitmapAttr(attr: String, defBitmap: Int): Bitmap {
@@ -190,7 +194,7 @@ class CropView(
     private fun setHalfLayoutDimensionsValues() {
         halfLayoutWidth = width / 2
         halfLayoutHeight = height / 2
-        if (cropMarginTop == -1f) cropMarginTop = (height - cropHeight) / 2
+        if (cropMarginTop == -1) cropMarginTop = ((height - cropHeight) / 2).roundToInt()
     }
 
     fun setCropWidthDp(dp: Int) {
@@ -200,7 +204,7 @@ class CropView(
 
     fun setCropHeightDp(dp: Int) {
         val newHeight = dp.toFloat().dp()
-        cropMarginTop -= (newHeight - cropHeight) / 2
+        cropMarginTop -= ((newHeight - cropHeight) / 2).toInt()
         cropHeight = newHeight
         invalidate()
     }
@@ -210,7 +214,7 @@ class CropView(
         val heightMargin = cropMarginTop
         return Rect(
             widthMargin.toInt(),
-            heightMargin.toInt(),
+            heightMargin,
             (widthMargin + cropWidth).toInt(),
             (heightMargin + cropHeight).toInt()
         )

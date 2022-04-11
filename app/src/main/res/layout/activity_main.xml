@@ -9,7 +9,7 @@
     android:id="@+id/layout">
 
     <com.itamarstern.cropview.CropView
-        app:cropMarginTop="100dp"
+        app:cropMarginTop="300dp"
         android:id="@+id/cropView"
         android:alpha="0.4"
         android:background="@color/black"

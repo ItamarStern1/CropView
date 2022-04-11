@@ -5,10 +5,10 @@
         <attr name="minHeightCrop" format="dimension" />
         <attr name="initialWidthCrop" format="dimension" />
         <attr name="initialHeightCrop" format="dimension" />
-        <attr name="startTopIcon" format="reference" />
-        <attr name="endTopIcon" format="reference" />
-        <attr name="startBottomIcon" format="reference" />
-        <attr name="endBottomIcon" format="reference" />
+        <attr name="topLeftIcon" format="reference" />
+        <attr name="topRightIcon" format="reference" />
+        <attr name="bottomLeftIcon" format="reference" />
+        <attr name="bottomRightIcon" format="reference" />
         <attr name="cropMarginTop" format="dimension" />
     </declare-styleable>
 </resources>

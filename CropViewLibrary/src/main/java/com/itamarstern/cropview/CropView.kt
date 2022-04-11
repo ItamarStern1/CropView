@@ -6,6 +6,8 @@ import android.util.AttributeSet
 import android.view.GestureDetector
 import android.view.MotionEvent
 import android.view.View
+import androidx.appcompat.content.res.AppCompatResources.getDrawable
+import androidx.core.graphics.drawable.toBitmap
 
 const val ANDROID_STYLE_NAMESPACE = "http://schemas.android.com/apk/res-auto"
 const val TAG = "CropViewTag"
@@ -178,12 +180,7 @@ class CropView(
         return try {
             BitmapFactory.decodeResource(resources, userInput)
         } catch (e: Throwable) {
-            val d = resources.getDrawable(defBitmap)
-            val b = Bitmap.createBitmap(d.intrinsicWidth, d.intrinsicHeight, Bitmap.Config.ARGB_8888)
-            val c = Canvas(b)
-            d.setBounds(0,0,c.width, c.height)
-            d.draw(c)
-            b
+            getDrawable(context, defBitmap)!!.toBitmap()
         }
     }
 
